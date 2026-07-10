@@ -266,3 +266,91 @@ def test_overdue_filter_returns_only_unfinished_overdue_tasks(client):
 
     assert len(body) == 1
     assert body[0]["title"] == "Overdue task"
+
+def test_search_finds_task_by_title_case_insensitively(client):
+    client.post("/tasks", json={"title": "Write Documentation"})
+    client.post("/tasks", json={"title": "Fix login bug"})
+
+    response = client.get("/tasks", params={"search": "documentation"})
+
+    assert response.status_code == 200
+    body = response.json()
+    assert len(body) == 1
+    assert body[0]["title"] == "Write Documentation"
+
+
+def test_search_finds_task_by_description(client):
+    client.post(
+        "/tasks",
+        json={
+            "title": "Backend task",
+            "description": "Add filtering to the API",
+        },
+    )
+    client.post(
+        "/tasks",
+        json={
+            "title": "Frontend task",
+            "description": "Improve the modal layout",
+        },
+    )
+
+    response = client.get("/tasks", params={"search": "filtering"})
+
+    assert response.status_code == 200
+    body = response.json()
+    assert len(body) == 1
+    assert body[0]["title"] == "Backend task"
+
+
+def test_search_combines_with_status_and_priority(client):
+    client.post(
+        "/tasks",
+        json={
+            "title": "Matching task",
+            "description": "Search target",
+            "status": "ToDo",
+            "priority": "High",
+        },
+    )
+    client.post(
+        "/tasks",
+        json={
+            "title": "Wrong priority",
+            "description": "Search target",
+            "status": "ToDo",
+            "priority": "Low",
+        },
+    )
+    client.post(
+        "/tasks",
+        json={
+            "title": "Wrong status",
+            "description": "Search target",
+            "status": "InProgress",
+            "priority": "High",
+        },
+    )
+
+    response = client.get(
+        "/tasks",
+        params={
+            "search": "search target",
+            "status": "ToDo",
+            "priority": "High",
+        },
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert len(body) == 1
+    assert body[0]["title"] == "Matching task"
+
+
+def test_search_no_matches_returns_200_and_empty_list(client):
+    client.post("/tasks", json={"title": "Existing task"})
+
+    response = client.get("/tasks", params={"search": "not-found-text"})
+
+    assert response.status_code == 200
+    assert response.json() == []

@@ -76,6 +76,7 @@ def get_all_tasks(
     status: Optional[TaskStatus] = None,
     priority: Optional[TaskPriority] = None,
     overdue: Optional[bool] = None,
+    search: Optional[str] = None,
 ) -> list[TaskResponse]:
     tasks = list(_get_tasks_store().values())
 
@@ -95,7 +96,15 @@ def get_all_tasks(
             and task.due_date < today
             and task.status != TaskStatus.DONE
         ]
+    if search:
+        search_value = search.lower()
 
+        tasks = [
+            task
+            for task in tasks
+            if search_value in task.title.lower()
+            or search_value in task.description.lower()
+        ]
     return tasks
 
 

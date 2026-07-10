@@ -412,10 +412,28 @@
       </header>
 
       <div class="header-actions">
-        <button type="button" class="primary-button" id="new-task-button">
-          New Task
-        </button>
-      </div>
+  <input
+    id="search-input"
+    type="text"
+    placeholder="Search tasks..."
+  />
+
+  <select id="priority-filter">
+    <option value="">All priorities</option>
+    <option value="High">High</option>
+    <option value="Medium">Medium</option>
+    <option value="Low">Low</option>
+  </select>
+
+  <label>
+    <input id="overdue-filter" type="checkbox" />
+    Overdue
+  </label>
+
+  <button type="button" class="primary-button" id="new-task-button">
+    New Task
+  </button>
+</div>
 
       <div
         id="board-state"
@@ -624,6 +642,15 @@
       const newTaskButton = document.getElementById(
         'new-task-button'
       );
+      const searchInput = document.getElementById('search-input');
+
+const priorityFilter = document.getElementById(
+  'priority-filter'
+);
+
+const overdueFilter = document.getElementById(
+  'overdue-filter'
+);
 
       function escapeText(value) {
         return String(value ?? '')
@@ -1197,36 +1224,60 @@
       }
 
       async function fetchTasks() {
-        renderBoard([], 'loading');
+  renderBoard([], 'loading');
 
-        try {
-          const response = await fetch(
-            `${BASE_URL}/tasks`
-          );
+  const params = new URLSearchParams();
 
-          if (!response.ok) {
-            throw new Error(
-              `Request failed with status ${response.status}`
-            );
-          }
+  if (searchInput.value.trim()) {
+    params.append(
+      'search',
+      searchInput.value.trim()
+    );
+  }
 
-          const data = await response.json();
+  if (priorityFilter.value) {
+    params.append(
+      'priority',
+      priorityFilter.value
+    );
+  }
 
-          renderBoard(
-            data,
-            Array.isArray(data) && data.length === 0
-              ? 'empty'
-              : 'ready'
-          );
-        } catch (error) {
-          console.error(
-            'Unable to load tasks:',
-            error
-          );
+  if (overdueFilter.checked) {
+    params.append(
+      'overdue',
+      'true'
+    );
+  }
 
-          renderBoard([], 'error');
-        }
-      }
+  try {
+    const response = await fetch(
+      `${BASE_URL}/tasks?${params.toString()}`
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `Request failed with status ${response.status}`
+      );
+    }
+
+    const data = await response.json();
+
+    renderBoard(
+      data,
+      Array.isArray(data) && data.length === 0
+        ? 'empty'
+        : 'ready'
+    );
+
+  } catch (error) {
+    console.error(
+      'Unable to load tasks:',
+      error
+    );
+
+    renderBoard([], 'error');
+  }
+}
 
       boardState.addEventListener(
         'click',
@@ -1244,6 +1295,20 @@
         'click',
         () => openTaskModal('create')
       );
+      searchInput.addEventListener(
+  'input',
+  fetchTasks
+);
+
+priorityFilter.addEventListener(
+  'change',
+  fetchTasks
+);
+
+overdueFilter.addEventListener(
+  'change',
+  fetchTasks
+);
 
       document
         .getElementById('task-modal-close')

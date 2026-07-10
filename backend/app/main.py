@@ -51,11 +51,13 @@ def list_tasks(
     status: TaskStatus | None = None,
     priority: TaskPriority | None = None,
     overdue: bool | None = None,
+    search: str | None = None,
 ) -> list[TaskResponse]:
     return storage.get_all_tasks(
         status=status,
         priority=priority,
         overdue=overdue,
+        search=search,
     )
 
 
