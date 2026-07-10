@@ -102,3 +102,83 @@ Expected response shape:
 ## API Documentation (Swagger)
 
 Once the server is running, open the following URL in your browser:
+
+
+
+## Running the Project
+
+### Backend
+
+Go to the backend folder:
+
+```bash
+cd backend
+```
+
+Activate the virtual environment:
+
+```bash
+venv\Scripts\activate
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Start the backend:
+
+```bash
+uvicorn app.main:app --reload
+```
+
+Backend runs at:
+
+http://127.0.0.1:8000
+
+
+### Frontend
+
+From the main project folder:
+
+```bash
+python -m http.server 5500 --directory frontend
+```
+
+Open:
+
+http://127.0.0.1:5500
+
+
+### Run Tests
+
+Inside the backend folder:
+
+```bash
+pytest -q
+```
+
+Expected:
+
+```text
+33 passed
+```
+
+
+## Mid-Course Project Features
+
+### Due Dates + Overdue Filtering
+
+- Add due dates to tasks
+- Edit due dates
+- Show overdue indicator
+- Filter overdue tasks
+
+
+### Search + Combined Filters
+
+- Search task title and description
+- Case-insensitive matching
+- Combine search with filters
+- Keep empty Kanban columns visible
