@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from enum import Enum
 from typing import Optional
 
@@ -19,10 +19,13 @@ class TaskPriority(str, Enum):
 
 def _validate_title_value(value: str) -> str:
     stripped = value.strip()
+
     if not stripped:
         raise ValueError("title must not be blank")
+
     if len(stripped) > 200:
         raise ValueError("title must not exceed 200 characters")
+
     return stripped
 
 
@@ -34,6 +37,7 @@ class TaskCreate(BaseModel):
     status: TaskStatus = TaskStatus.TODO
     priority: TaskPriority = TaskPriority.MEDIUM
     assignee: Optional[str] = None
+    due_date: Optional[date] = None
 
     @field_validator("title")
     @classmethod
@@ -49,12 +53,14 @@ class TaskUpdate(BaseModel):
     status: Optional[TaskStatus] = None
     priority: Optional[TaskPriority] = None
     assignee: Optional[str] = None
+    due_date: Optional[date] = None
 
     @field_validator("title")
     @classmethod
     def validate_title(cls, value: Optional[str]) -> Optional[str]:
         if value is None:
             return value
+
         return _validate_title_value(value)
 
 
@@ -67,5 +73,6 @@ class TaskResponse(BaseModel):
     status: TaskStatus
     priority: TaskPriority
     assignee: Optional[str]
+    due_date: Optional[date] = None
     created_at: datetime
     updated_at: datetime
