@@ -3,12 +3,10 @@ name: CI
 on:
   push:
     branches:
-      - main
-      - master
+      - mid-course-project
   pull_request:
     branches:
-      - main
-      - master
+      - mid-course-project
 
 jobs:
   test:
@@ -21,7 +19,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.14
+          python-version: 3.12
 
       - name: Install dependencies
         run: |
