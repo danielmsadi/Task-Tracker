@@ -30,7 +30,7 @@
 - Dependency installation: `python -m pip install -r requirements.txt`
 - Test command used by CI: `python -m pytest -q`
 - Shortcut check: No `continue-on-error`, no `|| true`, and pytest is not skipped.
-- Latest run link or note: Pending until the `final-project` branch is pushed to GitHub.
+- Latest run link or note: GitHub Actions CI completed successfully with a green result on the `final-project` branch.
 
 
 
