@@ -3,9 +3,10 @@ __pycache__/
 *$py.class
 
 .env
+.env.*
+.venv/
 venv/
 env/
-.venv/
 
 .pytest_cache/
 .mypy_cache/
@@ -14,8 +15,8 @@ env/
 *.egg-info/
 dist/
 build/
+*.log
 
 .vscode/
 .idea/
-
 .DS_Store

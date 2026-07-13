@@ -50,6 +50,19 @@ def _get_tasks_store() -> dict[str, TaskResponse]:
 
 
 def add_task(payload: TaskCreate) -> TaskResponse:
+    """Create and persist a new task in the JSON-backed store.
+
+    Args:
+        payload: Task creation data used to build the new task record.
+
+    Returns:
+        TaskResponse: The stored task including its generated identifier and
+            timestamp values.
+
+    Raises:
+        None: The function does not raise an explicit exception for the current
+            flow.
+    """
     now = datetime.now(timezone.utc)
     task_id = str(uuid4())
 
@@ -78,6 +91,22 @@ def get_all_tasks(
     overdue: Optional[bool] = None,
     search: Optional[str] = None,
 ) -> list[TaskResponse]:
+    """Return stored tasks filtered by the supplied query parameters.
+
+    Args:
+        status: Optional status filter applied to the task list.
+        priority: Optional priority filter applied to the task list.
+        overdue: When True, only overdue tasks that are not marked as done are
+            included.
+        search: Optional text used to match task titles and descriptions.
+
+    Returns:
+        list[TaskResponse]: The filtered list of stored tasks.
+
+    Raises:
+        None: The function does not raise an explicit exception for the current
+            flow.
+    """
     tasks = list(_get_tasks_store().values())
 
     if status is not None:
@@ -109,10 +138,36 @@ def get_all_tasks(
 
 
 def get_task_by_id(task_id: str) -> Optional[TaskResponse]:
+    """Fetch a task from the in-memory store by identifier.
+
+    Args:
+        task_id: Unique identifier of the task to return.
+
+    Returns:
+        Optional[TaskResponse]: The matching task when found, otherwise None.
+
+    Raises:
+        None: The function does not raise an explicit exception for the current
+            flow.
+    """
     return _get_tasks_store().get(task_id)
 
 
 def update_task(task_id: str, payload: TaskUpdate) -> Optional[TaskResponse]:
+    """Apply partial updates to an existing task and persist the result.
+
+    Args:
+        task_id: Unique identifier of the task to update.
+        payload: Partial task fields to apply to the stored task.
+
+    Returns:
+        Optional[TaskResponse]: The updated task when the identifier exists,
+            otherwise None.
+
+    Raises:
+        None: The function does not raise an explicit exception for the current
+            flow.
+    """
     tasks = _get_tasks_store()
     task = tasks.get(task_id)
 
@@ -138,6 +193,18 @@ def update_task(task_id: str, payload: TaskUpdate) -> Optional[TaskResponse]:
 
 
 def delete_task(task_id: str) -> bool:
+    """Remove a task from the store when it exists.
+
+    Args:
+        task_id: Unique identifier of the task to delete.
+
+    Returns:
+        bool: True when the task was deleted, otherwise False.
+
+    Raises:
+        None: The function does not raise an explicit exception for the current
+            flow.
+    """
     tasks = _get_tasks_store()
 
     if task_id not in tasks:

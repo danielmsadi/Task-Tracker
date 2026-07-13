@@ -6,7 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /install
 
-COPY backend/requirements.txt ./requirements.txt
+COPY requirements.txt ./requirements.txt
 
 RUN python -m venv /opt/venv \
     && /opt/venv/bin/pip install --upgrade pip \
@@ -24,8 +24,8 @@ RUN groupadd --system app \
     && useradd --system --gid app app
 
 COPY --from=builder /opt/venv /opt/venv
-COPY backend/app ./app
-COPY backend/data ./data
+COPY app ./app
+COPY data ./data
 
 RUN chown -R app:app /app /opt/venv
 

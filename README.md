@@ -1,184 +1,166 @@
-# Module 1 Task Tracker API
+# Task Tracker
 
-A minimal learning-project REST API built with **Python**, **FastAPI**, and **Pydantic**.
+Task Tracker is a lightweight learning application built with Python, FastAPI, Pydantic, plain HTML, CSS, and JavaScript. It provides a Kanban interface and a REST API for creating, viewing, filtering, updating, moving, and deleting tasks. Task data is stored in a local JSON file.
 
-## Project Description
+## Features
 
-This is the backend skeleton for the Module 1 Task Tracker, a single-shared-list
-task tracking application. Per ADR-001, task data will be stored in a local JSON
-file at `backend/data/tasks.json` rather than a production database.
+- Create, read, update, and delete tasks.
+- Track status, priority, assignee, and due date.
+- Search tasks and filter by priority or overdue state.
+- Move tasks between To Do, In Progress, and Done.
+- Persist task data in `data/tasks.json`.
+- Check service availability through `GET /health`.
 
-This skeleton intentionally excludes:
-- Authentication / user accounts / multi-tenancy
-- Real-time updates
-- Mobile app
-- Notifications
-- Production database
-- Docker / cloud deployment setup
-- Frontend files
-- CRUD endpoints (to be added in a later step)
+## Repository structure
 
-Currently, only a `/health` endpoint is implemented to verify the API is running.
-
-## Project Structure
-
-task-tracker/
-├── README.md
-└── backend/
-├── .env.example
-├── .gitignore
-├── requirements.txt
-├── app/
-│   ├── init.py
-│   └── main.py
-└── data/
-└── tasks.json
-
-## Setup Instructions
-
-1. Navigate to the backend folder:
-```bash
-   cd backend
+```text
+.github/workflows/ci.yml
+Dockerfile
+.dockerignore
+README.md
+AGENTS.md
+requirements.txt
+app/
+data/
+frontend/
+tests/
+docs/
 ```
 
-2. Create a virtual environment:
-```bash
-   python -m venv venv
-```
+## Requirements
 
-3. Activate the virtual environment:
+- Python 3.11 is the verified release version.
+- `pip` for installing dependencies.
+- Docker only for the container workflow.
 
-   **Linux/macOS:**
-```bash
-   source venv/bin/activate
-```
+## Local setup
 
-   **Windows (PowerShell):**
+Run these commands from the repository root.
+
+### Windows PowerShell
+
 ```powershell
-   venv\Scripts\Activate.ps1
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
 ```
 
-4. Install dependencies:
+### macOS or Linux
+
 ```bash
-   pip install -r requirements.txt
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
 ```
 
-5. Copy the example environment file:
+## Run the application locally
 
-   **Linux/macOS:**
-```bash
-   cp .env.example .env
-```
+Start the API from the repository root:
 
-   **Windows (PowerShell):**
 ```powershell
-   Copy-Item .env.example .env
+python -m uvicorn app.main:app --reload --port 8000
 ```
 
-## Running the Server
+The API is available at `http://127.0.0.1:8000`, the Swagger UI is at `http://127.0.0.1:8000/docs`, and the health endpoint is at `http://127.0.0.1:8000/health`.
 
-From the `backend` folder, with the virtual environment activated:
+In a second terminal, start the frontend:
 
-```bash
-uvicorn app.main:app --reload --port 8000
-```
-
-The API will be available at `http://127.0.0.1:8000`.
-
-## Testing the Health Endpoint
-
-```bash
-curl http://127.0.0.1:8000/health
-```
-
-Expected response shape:
-```json
-{
-  "status": "ok",
-  "timestamp": "2026-06-30T12:34:56.789012+00:00"
-}
-```
-
-## API Documentation (Swagger)
-
-Once the server is running, open the following URL in your browser:
-
-
-
-## Running the Project
-
-### Backend
-
-Go to the backend folder:
-
-```bash
-cd backend
-```
-
-Activate the virtual environment:
-
-```bash
-venv\Scripts\activate
-```
-
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-Start the backend:
-
-```bash
-uvicorn app.main:app --reload
-```
-
-Backend runs at:
-
-http://127.0.0.1:8000
-
-
-### Frontend
-
-From the main project folder:
-
-```bash
+```powershell
 python -m http.server 5500 --directory frontend
 ```
 
-Open:
+Open `http://127.0.0.1:5500` in a browser.
 
-http://127.0.0.1:5500
+## Run the tests
 
+From the repository root:
 
-### Run Tests
-
-Inside the backend folder:
-
-```bash
-pytest -q
+```powershell
+python -m pytest -q
 ```
 
-Expected:
+The test fixture resets `data/tasks.json`, so do not keep important local task data in that file while running the suite.
 
-```text
-33 passed
+## Run with Docker
+
+Build the image:
+
+```powershell
+docker build -t task-tracker:final .
 ```
 
+Run the container:
 
-## Mid-Course Project Features
+```powershell
+docker run --rm --name task-tracker-final -p 8000:8000 task-tracker:final
+```
 
-### Due Dates + Overdue Filtering
+Check the container from another terminal:
 
-- Add due dates to tasks
-- Edit due dates
-- Show overdue indicator
-- Filter overdue tasks
+```powershell
+curl.exe -i http://127.0.0.1:8000/health
+```
 
+Stop it with `Ctrl+C`. The image runs the API as a non-root user and copies only the application package and empty local data file into the runtime image.
 
-### Search + Combined Filters
+## API endpoints
 
-- Search task title and description
-- Case-insensitive matching
-- Combine search with filters
-- Keep empty Kanban columns visible
+| Method | Route | Purpose |
+| --- | --- | --- |
+| GET | `/health` | Return service status and a UTC timestamp. |
+| POST | `/tasks` | Create a task. |
+| GET | `/tasks` | List tasks with optional filters. |
+| GET | `/tasks/{task_id}` | Get one task. |
+| PATCH | `/tasks/{task_id}` | Partially update a task. |
+| DELETE | `/tasks/{task_id}` | Delete a task. |
+
+## Final Project
+
+Branch reviewed: `final-project`
+
+### What this submission demonstrates
+
+- The existing Task Tracker still runs inside the intended course scope.
+- CI runs the pytest suite on push and pull request.
+- The Docker configuration uses a clear runtime command and a non-root user.
+- AI review, security, release, and ownership evidence is stored in `docs/`.
+- No new product feature was added for the final project.
+
+### How to run locally
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python -m uvicorn app.main:app --reload --port 8000
+```
+
+In a second terminal:
+
+```powershell
+python -m http.server 5500 --directory frontend
+```
+
+### How to run tests
+
+```powershell
+python -m pytest -q
+```
+
+### How to run with Docker
+
+```powershell
+docker build -t task-tracker:final .
+docker run --rm --name task-tracker-final -p 8000:8000 task-tracker:final
+curl http://127.0.0.1:8000/health
+```
+
+### Evidence files
+
+- `docs/release-evidence.md`
+- `docs/final-ai-review.md`
+- `docs/ai-playbook.md`
+
+### AI assistance summary
+
+AI helped review the repository, prepare the required release files, check documentation claims, and perform a read-only security review. The work was verified with pytest, a local API health request, a served frontend check, Docker runtime verification, and a check of the files included in the Docker image. Suggestions that would add out-of-scope product features or hide failures were rejected.
