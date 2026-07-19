@@ -18,7 +18,7 @@
 - Frontend run command: `python -m http.server 5500 --directory frontend`
 - Frontend result: the Kanban board and create/edit controls were visible; task movement rules and filters were manually exercised.
 - Test command: `python -m pytest -q`
-- Test result: `33 passed in 0.64s` using the local Python 3.12 virtual environment on `2026-07-19`.
+- Test result: `33 passed in 0.58s` using the local Python 3.12 virtual environment on `2026-07-19` after the final documentation-only cleanup.
 - Release-version note: CI and Docker remain pinned to Python 3.11, as shown in `.github/workflows/ci.yml` and `Dockerfile`. The local Python 3.12 run is supporting verification, not a replacement for the release environment.
 - Scope result: no new product feature was added.
 - Application-change conclusion: `app/main.py`, `app/business_rules.py`, and `app/storage.py` received docstrings; the stray `[VERIFY]` annotation was removed from an `app/main.py` docstring. Application behavior was preserved. The exact documentation-only changes are explained in `docs/final-ai-review.md`.
@@ -40,7 +40,7 @@
 - Build command: `docker build -t task-tracker:final .`
 - Run command: `docker run --rm --name task-tracker-final -p 8000:8000 task-tracker:final`
 - `/health` check: `curl.exe -i http://127.0.0.1:8000/health`
-- `/health` result: the container returned `{"status":"ok","timestamp":"2026-07-19T12:50:23.259452+00:00"}` with the Uvicorn response headers shown by `curl.exe -i`.
+- `/health` result: the rebuilt final image returned `HTTP/1.1 200 OK` with `{"status":"ok","timestamp":"2026-07-19T13:48:04.231512+00:00"}`.
 - Non-root check: `docker image inspect task-tracker:final --format "{{.Config.User}}"`
 - Non-root result: `app`.
 - No-baked-secrets check: `docker run --rm --entrypoint sh task-tracker:final -c "find /app -type f | sort"`; confirm that no `.env`, credentials, tokens, logs, or `.venv` files are included.
@@ -52,8 +52,8 @@
 
 | Claim checked | Evidence used | Result | Change made, if any |
 |---|---|---|---|
-| `python -m pytest -q` runs the complete test suite. | Full pytest run from the repository root using the local Python 3.12 virtual environment. | Passed: `33 passed in 0.64s` on `2026-07-19`. | CI and Docker stay pinned to Python 3.11 for release verification. |
-| `GET /health` responds successfully. | Docker request using `curl.exe -i`. | Passed: a Uvicorn response with `{"status":"ok"}` and UTC timestamp at `2026-07-19T12:50:23.259452+00:00`. | Keep the exact tested Windows command in the release instructions. |
+| `python -m pytest -q` runs the complete test suite. | Full pytest run from the repository root using the local Python 3.12 virtual environment. | Passed: `33 passed in 0.58s` on `2026-07-19` after the final documentation-only cleanup. | CI and Docker stay pinned to Python 3.11 for release verification. |
+| `GET /health` responds successfully. | Docker request using `curl.exe -i` against the rebuilt final image. | Passed: `HTTP/1.1 200 OK` with `{"status":"ok"}` and UTC timestamp at `2026-07-19T13:48:04.231512+00:00`. | Keep the exact tested Windows command in the release instructions. |
 | The Docker image runs as a non-root user. | `docker image inspect task-tracker:final --format "{{.Config.User}}"`. | Passed: `app`. | No change needed. |
 | The application source was unchanged. | Diff between `mid-course-project` and `final-project`. | Incorrect: docstrings were added in three `app/` files. | Corrected the claim to: application behavior was preserved, and the documentation-only edits are listed in `docs/final-ai-review.md`. |
 | CI and Docker evidence represent the submitted state. | Clean branch-head commit, local Docker verification after that commit, and the GitHub Actions run for the same branch-head commit. | Valid only when the finalization rule above is followed. | Replaced conflicting historical statements with one internally consistent finalization rule. |
