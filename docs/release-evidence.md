@@ -21,7 +21,7 @@
 - Test result: `33 passed in 0.58s` using the local Python 3.12 virtual environment on `2026-07-19` after the final documentation-only cleanup.
 - Release-version note: CI and Docker remain pinned to Python 3.11, as shown in `.github/workflows/ci.yml` and `Dockerfile`. The local Python 3.12 run is supporting verification, not a replacement for the release environment.
 - Scope result: no new product feature was added.
-- Application-change conclusion: `app/main.py`, `app/business_rules.py`, and `app/storage.py` received docstrings; the stray `[VERIFY]` annotation was removed from an `app/main.py` docstring. Application behavior was preserved. The exact documentation-only changes are explained in `docs/final-ai-review.md`.
+- Application-change conclusion: `app/main.py`, `app/business_rules.py`, and `app/storage.py` received docstrings; a stray verification annotation was removed from an `app/main.py` docstring. Application behavior was preserved. The exact documentation-only changes are explained in `docs/final-ai-review.md`.
 
 ## CI evidence for the exact final commit
 
