@@ -4,9 +4,9 @@
 
 - Branch: `final-project`
 - Final evidence date: `2026-07-19`
-- Evidence target: the exact final commit at the head of `final-project` when resubmitted.
-- State rule: commit all corrections first, confirm `git status --short` is empty, then run the final tests and Docker checks and push that same commit. The GitHub Actions run must be green for that exact branch-head commit. Do not create another commit after these checks unless all final checks are repeated.
-- This file records the commands, expected observations, and the rule used to tie the results to the submitted commit. The final verification is valid only when the repository is clean before the checks and no later commit is created.
+- Evidence target: correction commit `84d3f198c6ebde3be4d467c49ed22ef6b6a8e602` on `final-project`.
+- State rule: the application correction, its regression tests, and the supporting documentation were committed together, pushed, and verified by GitHub Actions. The later evidence-only commit records that observed result and does not change application code, tests, dependencies, Docker inputs, or CI configuration.
+- This file ties the successful CI result directly to the commit containing the grader-requested null-validation correction.
 
 ## Local verification
 
@@ -31,11 +31,11 @@
 - Dependency installation: `python -m pip install -r requirements.txt`
 - Test command used by CI: `python -m pytest -q`
 - Shortcut check: no `continue-on-error`, no `|| true`, and pytest is not skipped.
-- Exact-commit check: compare the commit SHA shown by the green GitHub Actions run with `git rev-parse HEAD` on `final-project`.
-- Previously observed run: CI run `#6` completed for commit `8dc4c5e7015663339bae642662bef5b66d2f452b`, but it does not verify the later null-validation correction and is not the final submission evidence.
-- Final submitted commit SHA: **not yet available; record after committing the correction**.
-- Final successful CI run: **not yet available; record the successful run URL and run number after pushing that exact commit**.
-- Confirmation: before submission, verify that the run's commit SHA exactly equals the final submitted commit SHA and that no later commit exists. Until those two entries are replaced with observed values, final CI is not verified.
+- Exact-commit check: compare the run's `head_sha` with `git show -s --format=%H 84d3f19` and confirm that commit contains the application and regression-test correction.
+- Submitted correction commit SHA: `84d3f198c6ebde3be4d467c49ed22ef6b6a8e602`.
+- Final successful correction run: GitHub Actions CI run `#12`, `https://github.com/danielmsadi/Task-Tracker/actions/runs/29693659216`.
+- Result: `completed` with conclusion `success` on `2026-07-19`.
+- Confirmation: the run's `head_sha` is `84d3f198c6ebde3be4d467c49ed22ef6b6a8e602`, exactly matching the commit containing the `app/models.py` correction and null-validation regression tests.
 
 ## Docker evidence for the exact final commit
 
