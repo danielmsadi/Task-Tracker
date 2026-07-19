@@ -163,4 +163,4 @@ curl http://127.0.0.1:8000/health
 
 ### AI assistance summary
 
-AI helped review the repository, prepare the required release files, check documentation claims, and perform a read-only security review. The work was verified with pytest, a local API health request, a served frontend check, Docker runtime verification, and a check of the files included in the Docker image. Suggestions that would add out-of-scope product features or hide failures were rejected.
+AI helped review the repository, prepare the required release files, check documentation claims, and perform a read-only security review. The exact commands, results, and commit-matching rule for pytest, local API, frontend, Docker, and CI verification are recorded in `docs/release-evidence.md`. Suggestions that would add out-of-scope product features or hide failures were rejected.
