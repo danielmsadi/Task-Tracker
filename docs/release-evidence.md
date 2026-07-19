@@ -32,7 +32,7 @@
 - Test command used by CI: `python -m pytest -q`
 - Shortcut check: no `continue-on-error`, no `|| true`, and pytest is not skipped.
 - Exact-commit check: compare the commit SHA shown by the green GitHub Actions run with `git rev-parse HEAD` on `final-project`.
-- Final result to record after push: the CI run is green for that SHA, and no later commit was added afterward.
+- Final result: after this final evidence commit is pushed, GitHub Actions must complete successfully for the current `final-project` branch-head; its reported SHA must match `git rev-parse HEAD`, and no later commit may be added.
 
 ## Docker evidence for the exact final commit
 
@@ -46,7 +46,7 @@
 - No-baked-secrets check: `docker run --rm --entrypoint sh task-tracker:final -c "find /app -type f | sort"`; confirm that no `.env`, credentials, tokens, logs, or `.venv` files are included.
 - No-baked-secrets result: `/app` contained only `app/__init__.py`, `app/business_rules.py`, `app/main.py`, `app/models.py`, `app/storage.py`, and `data/tasks.json`. No disallowed files were present.
 - Runtime command: `uvicorn app.main:app --host 0.0.0.0 --port 8000` is explicitly defined in the Dockerfile.
-- Exact-commit note: the remaining final commit changes only `README.md` and `docs/`, both excluded by `.dockerignore`; therefore they do not alter the Docker build context. CI must still run successfully for the final branch-head commit after it is pushed.
+- Exact-commit note: the Docker check used the same Docker inputs as the final commit: `Dockerfile`, `.dockerignore`, `requirements.txt`, `app/`, and `data/`. This final evidence commit changes only `docs/`, which is excluded by `.dockerignore`, so it does not alter the Docker build context. CI still verifies the exact final branch-head commit after push.
 
 ## Documentation claim-vs-reality log
 
