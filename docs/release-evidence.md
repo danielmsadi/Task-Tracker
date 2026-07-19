@@ -18,10 +18,10 @@
 - Frontend run command: `python -m http.server 5500 --directory frontend`
 - Frontend result: the Kanban board and create/edit controls were visible; task movement rules and filters were manually exercised.
 - Test command: `python -m pytest -q`
-- Test result: `33 passed in 0.58s` using the local Python 3.12 virtual environment on `2026-07-19` after the final documentation-only cleanup.
+- Test result: `41 passed in 0.68s` using the local virtual environment on `2026-07-19` after the grader-requested null-validation correction.
 - Release-version note: CI and Docker remain pinned to Python 3.11, as shown in `.github/workflows/ci.yml` and `Dockerfile`. The local Python 3.12 run is supporting verification, not a replacement for the release environment.
 - Scope result: no new product feature was added.
-- Application-change conclusion: `app/main.py`, `app/business_rules.py`, and `app/storage.py` received docstrings; a stray verification annotation was removed from an `app/main.py` docstring. Application behavior was preserved. The exact documentation-only changes are explained in `docs/final-ai-review.md`.
+- Application-change conclusion: `app/models.py` received the bounded data-integrity correction requested by the grader, and `tests/test_tasks.py` received regression coverage. The earlier documentation-only source changes remain explained in `docs/final-ai-review.md`.
 
 ## CI evidence for the exact final commit
 
@@ -32,15 +32,19 @@
 - Test command used by CI: `python -m pytest -q`
 - Shortcut check: no `continue-on-error`, no `|| true`, and pytest is not skipped.
 - Exact-commit check: compare the commit SHA shown by the green GitHub Actions run with `git rev-parse HEAD` on `final-project`.
-- Final result: after this final evidence commit is pushed, GitHub Actions must complete successfully for the current `final-project` branch-head; its reported SHA must match `git rev-parse HEAD`, and no later commit may be added.
+- Previously observed run: CI run `#6` completed for commit `8dc4c5e7015663339bae642662bef5b66d2f452b`, but it does not verify the later null-validation correction and is not the final submission evidence.
+- Final submitted commit SHA: **not yet available; record after committing the correction**.
+- Final successful CI run: **not yet available; record the successful run URL and run number after pushing that exact commit**.
+- Confirmation: before submission, verify that the run's commit SHA exactly equals the final submitted commit SHA and that no later commit exists. Until those two entries are replaced with observed values, final CI is not verified.
 
 ## Docker evidence for the exact final commit
 
+- Current correction status: rebuilt and reverified from the corrected working tree on `2026-07-19`. Repeat only if Docker inputs change before the final commit.
 - Docker verification date: `2026-07-19`.
 - Build command: `docker build -t task-tracker:final .`
 - Run command: `docker run --rm --name task-tracker-final -p 8000:8000 task-tracker:final`
 - `/health` check: `curl.exe -i http://127.0.0.1:8000/health`
-- `/health` result: the rebuilt final image returned `HTTP/1.1 200 OK` with `{"status":"ok","timestamp":"2026-07-19T13:48:04.231512+00:00"}`.
+- `/health` result: the rebuilt final image returned HTTP 200 with `{"status":"ok","timestamp":"2026-07-19T15:47:30.802224+00:00"}`.
 - Non-root check: `docker image inspect task-tracker:final --format "{{.Config.User}}"`
 - Non-root result: `app`.
 - No-baked-secrets check: `docker run --rm --entrypoint sh task-tracker:final -c "find /app -type f | sort"`; confirm that no `.env`, credentials, tokens, logs, or `.venv` files are included.
@@ -52,7 +56,8 @@
 
 | Claim checked | Evidence used | Result | Change made, if any |
 |---|---|---|---|
-| `python -m pytest -q` runs the complete test suite. | Full pytest run from the repository root using the local Python 3.12 virtual environment. | Passed: `33 passed in 0.58s` on `2026-07-19` after the final documentation-only cleanup. | CI and Docker stay pinned to Python 3.11 for release verification. |
+| `python -m pytest -q` runs the complete test suite. | Full pytest run from the repository root using the local virtual environment. | Passed: `41 passed in 0.68s` on `2026-07-19` after the null-validation correction. | CI and Docker stay pinned to Python 3.11 for release verification. |
+| Core task fields reject explicit `null`. | Parametrized POST and PATCH API tests for `title`, `description`, `status`, and `priority`. | Passed: all eight cases returned HTTP 422 as part of the 41-test run. | `app/models.py` keeps partial-update omission valid while rejecting explicit nulls. |
 | `GET /health` responds successfully. | Docker request using `curl.exe -i` against the rebuilt final image. | Passed: `HTTP/1.1 200 OK` with `{"status":"ok"}` and UTC timestamp at `2026-07-19T13:48:04.231512+00:00`. | Keep the exact tested Windows command in the release instructions. |
 | The Docker image runs as a non-root user. | `docker image inspect task-tracker:final --format "{{.Config.User}}"`. | Passed: `app`. | No change needed. |
 | The application source was unchanged. | Diff between `mid-course-project` and `final-project`. | Incorrect: docstrings were added in three `app/` files. | Corrected the claim to: application behavior was preserved, and the documentation-only edits are listed in `docs/final-ai-review.md`. |

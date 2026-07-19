@@ -19,6 +19,13 @@ The final-project diff was checked against the `mid-course-project` branch. Thre
 
 These files were therefore not textually unchanged. The accurate conclusion is that their documentation changed while application behavior was preserved, which was verified by the existing test suite and runtime checks.
 
+## Grader-requested validation correction
+
+- `app/models.py`: creation requests now reject `null` for `description`, matching the existing non-null validation for `title`, `status`, and `priority`. Partial updates still allow these fields to be omitted, but explicitly sending `null` for any of the four fields is rejected with HTTP 422.
+- `tests/test_tasks.py`: parametrized API tests cover all four fields for both create and patch requests.
+
+This is a bounded data-integrity bug fix requested in the resubmission feedback. It does not add a feature or change the nullable behavior of `assignee` and `due_date`.
+
 ## AI code review mini-log
 
 Changed file reviewed: `.github/workflows/ci.yml`

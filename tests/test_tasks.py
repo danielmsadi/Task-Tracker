@@ -1,5 +1,7 @@
 from datetime import date, timedelta
 
+import pytest
+
 
 def test_create_task_valid_returns_201_with_full_body(client):
     response = client.post(
@@ -45,6 +47,16 @@ def test_create_task_invalid_priority_returns_422(client):
 
 def test_create_task_unknown_field_returns_422(client):
     response = client.post("/tasks", json={"title": "Bad field", "unknown": "value"})
+
+    assert response.status_code == 422
+
+
+@pytest.mark.parametrize("field", ["title", "description", "status", "priority"])
+def test_create_task_rejects_null_required_field(client, field):
+    response = client.post(
+        "/tasks",
+        json={"title": "Valid task", field: None},
+    )
 
     assert response.status_code == 422
 
@@ -118,6 +130,16 @@ def test_patch_partial_update_keeps_other_fields(client):
     assert body["status"] == "ToDo"
     assert body["priority"] == "Medium"
     assert body["assignee"] == "Dana"
+
+
+@pytest.mark.parametrize("field", ["title", "description", "status", "priority"])
+def test_patch_task_rejects_null_required_field(client, created_task, field):
+    response = client.patch(
+        f"/tasks/{created_task['id']}",
+        json={field: None},
+    )
+
+    assert response.status_code == 422
 
 
 def test_patch_not_found_returns_404(client):

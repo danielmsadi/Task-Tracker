@@ -2,7 +2,7 @@ from datetime import date, datetime
 from enum import Enum
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
 
 class TaskStatus(str, Enum):
@@ -33,7 +33,7 @@ class TaskCreate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     title: str
-    description: Optional[str] = ""
+    description: str = ""
     status: TaskStatus = TaskStatus.TODO
     priority: TaskPriority = TaskPriority.MEDIUM
     assignee: Optional[str] = None
@@ -54,6 +54,22 @@ class TaskUpdate(BaseModel):
     priority: Optional[TaskPriority] = None
     assignee: Optional[str] = None
     due_date: Optional[date] = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def reject_null_required_fields(cls, value):
+        if isinstance(value, dict):
+            null_fields = [
+                field
+                for field in ("title", "description", "status", "priority")
+                if field in value and value[field] is None
+            ]
+            if null_fields:
+                raise ValueError(
+                    f"{', '.join(null_fields)} must not be null"
+                )
+
+        return value
 
     @field_validator("title")
     @classmethod
