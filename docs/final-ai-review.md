@@ -13,7 +13,7 @@ The final-project layout moved the existing application folders from `backend/` 
 
 The final-project diff was checked against the `mid-course-project` branch. Three application files contain documentation-only edits:
 
-- `app/main.py`: docstrings were added or expanded for `health_check`, `create_task`, `list_tasks`, `get_task`, and `update_task`. The route decorators, endpoint paths, response models, status codes, parameters, validation calls, storage calls, and returned values were not changed.
+- `app/main.py`: docstrings were added or expanded for `health_check`, `create_task`, `list_tasks`, `get_task`, and `update_task`; a stray `[VERIFY]` annotation was removed from the `create_task` docstring. The route decorators, endpoint paths, response models, status codes, parameters, validation calls, storage calls, and returned values were not changed.
 - `app/business_rules.py`: a docstring was added to `validate_status_transition`. The `VALID_TRANSITIONS` set and the executable validation logic were not changed.
 - `app/storage.py`: docstrings were added to `add_task`, `get_all_tasks`, `get_task_by_id`, `update_task`, and `delete_task`. The JSON persistence operations, filtering conditions, timestamps, identifiers, and return values were not changed.
 

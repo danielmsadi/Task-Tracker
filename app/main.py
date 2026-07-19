@@ -68,7 +68,7 @@ def create_task(payload: TaskCreate) -> TaskResponse:
     Raises:
         None: The handler itself does not raise an explicit exception for a
             successful request. FastAPI/Pydantic may reject invalid input before
-            this function runs. [VERIFY]
+            this function runs.
 
     Examples:
         Request:

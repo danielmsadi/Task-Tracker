@@ -21,7 +21,7 @@
 - Test result: `33 passed in 0.64s` using the local Python 3.12 virtual environment on `2026-07-19`.
 - Release-version note: CI and Docker remain pinned to Python 3.11, as shown in `.github/workflows/ci.yml` and `Dockerfile`. The local Python 3.12 run is supporting verification, not a replacement for the release environment.
 - Scope result: no new product feature was added.
-- Application-change conclusion: `app/main.py`, `app/business_rules.py`, and `app/storage.py` received docstrings, but application behavior was preserved. The exact documentation-only changes are explained in `docs/final-ai-review.md`.
+- Application-change conclusion: `app/main.py`, `app/business_rules.py`, and `app/storage.py` received docstrings; the stray `[VERIFY]` annotation was removed from an `app/main.py` docstring. Application behavior was preserved. The exact documentation-only changes are explained in `docs/final-ai-review.md`.
 
 ## CI evidence for the exact final commit
 
@@ -46,7 +46,7 @@
 - No-baked-secrets check: `docker run --rm --entrypoint sh task-tracker:final -c "find /app -type f | sort"`; confirm that no `.env`, credentials, tokens, logs, or `.venv` files are included.
 - No-baked-secrets result: `/app` contained only `app/__init__.py`, `app/business_rules.py`, `app/main.py`, `app/models.py`, `app/storage.py`, and `data/tasks.json`. No disallowed files were present.
 - Runtime command: `uvicorn app.main:app --host 0.0.0.0 --port 8000` is explicitly defined in the Dockerfile.
-- Exact-commit note: the Docker check used the same Docker inputs as the final commit: `Dockerfile`, `.dockerignore`, `requirements.txt`, `app/`, and `data/`. This final evidence commit changes only `docs/`, which is excluded by `.dockerignore`, so it does not alter the Docker build context. CI still verifies the exact final branch-head commit after push.
+- Exact-commit procedure: after this final cleanup commit is created, rebuild and check the image from its Docker inputs: `Dockerfile`, `.dockerignore`, `requirements.txt`, `app/`, and `data/`. Do not create a later commit after that Docker check; CI then verifies the exact final branch-head commit after push.
 
 ## Documentation claim-vs-reality log
 
